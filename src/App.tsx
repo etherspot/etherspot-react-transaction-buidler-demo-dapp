@@ -12,14 +12,8 @@ const wallets = [
   { walletName: "metamask", preferred: true },
 ];
 
-// @ts-ignore
-const WalletService = (onProvider) => Onboard({
+const WalletService = () => Onboard({
   walletSelect: { wallets },
-  subscriptions: {
-    wallet: ({ provider }) => {
-      onProvider(provider);
-    },
-  },
   networkId: 1,
 });
 
@@ -46,19 +40,12 @@ const ConnectWalletButton = styled.span`
 const App = () => {
   const [connectedProvider, setConnectedProvider] = useState(null);
 
-  const walletService = useMemo(() => WalletService(
-    // @ts-ignore
-    (provider) => {
-      if (provider) {
-        // @ts-ignore
-        setConnectedProvider(provider);
-      }
-    },
-  ), []);
+  const walletService = useMemo(() => WalletService(), []);
 
   const connectWithExternal = useCallback(async () => {
     await walletService.walletSelect().catch(() => null);
     await walletService.walletCheck().catch(() => null);
+    setConnectedProvider(walletService.getState().wallet.provider);
   }, [walletService]);
 
   const connectWithKeyBased = useCallback(() => {
