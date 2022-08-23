@@ -66,7 +66,7 @@ const App = () => {
       {connectedProvider && (
         <div>
           <Etherspot
-            defaultTransactionBlocks={[{ type: TRANSACTION_BLOCK_TYPE.ASSET_BRIDGE_TRANSACTION }]}
+            defaultTransactionBlocks={[{ type: TRANSACTION_BLOCK_TYPE.ASSET_BRIDGE }]}
             provider={connectedProvider}
           />
         </div>
