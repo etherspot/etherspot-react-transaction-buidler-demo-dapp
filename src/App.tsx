@@ -12,9 +12,11 @@ const wallets = [
   { walletName: "metamask", preferred: true },
 ];
 
+const chainId = 137;
+
 const WalletService = () => Onboard({
   walletSelect: { wallets },
-  networkId: 1,
+  networkId: chainId,
 });
 
 const Paragraph = styled.p`
@@ -66,8 +68,9 @@ const App = () => {
       {connectedProvider && (
         <div>
           <Etherspot
-            defaultTransactionBlocks={[{ type: TRANSACTION_BLOCK_TYPE.SEND_ASSET }]}
+            defaultTransactionBlocks={[{ type: TRANSACTION_BLOCK_TYPE.ASSET_BRIDGE }]}
             provider={connectedProvider}
+            chainId={chainId}
           />
         </div>
       )}
