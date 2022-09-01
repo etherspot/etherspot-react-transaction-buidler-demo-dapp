@@ -12,7 +12,7 @@ const wallets = [
   { walletName: "metamask", preferred: true },
 ];
 
-const chainId = 137;
+const chainId = 1;
 
 const WalletService = () => Onboard({
   walletSelect: { wallets },
