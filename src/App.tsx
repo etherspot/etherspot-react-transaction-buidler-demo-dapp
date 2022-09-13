@@ -98,6 +98,7 @@ const App = () => {
             switchInput: '#1a1726',
             switchInputActiveTab: '#443d66',
             switchInputInactiveTab: 'transparent',
+            pill: '#2b2640',
           },
           text: {
             selectInput: '#ffeee6',
@@ -121,6 +122,8 @@ const App = () => {
             switchInputInactiveTab: '#bbb8cc',
             selectInputImagePlaceholder: '#ffeee6',
             cardDisabled: '#605e5e',
+            pill: '#bbb8cc',
+            pillValue: '#ffeee6',
           }
         }
       }
@@ -139,7 +142,7 @@ const App = () => {
         <div>
           <ToggleThemeButton onClick={() => setUseDashboardTheme(!useDashboardTheme)}>Toggle theme</ToggleThemeButton>
           <Etherspot
-            defaultTransactionBlocks={[{ type: TRANSACTION_BLOCK_TYPE.ASSET_BRIDGE }]}
+            defaultTransactionBlocks={[{ type: TRANSACTION_BLOCK_TYPE.SEND_ASSET }]}
             provider={connectedProvider}
             chainId={chainId}
             themeOverride={themeOverride}
