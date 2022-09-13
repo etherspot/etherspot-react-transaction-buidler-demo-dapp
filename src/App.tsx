@@ -142,7 +142,7 @@ const App = () => {
         <div>
           <ToggleThemeButton onClick={() => setUseDashboardTheme(!useDashboardTheme)}>Toggle theme</ToggleThemeButton>
           <Etherspot
-            defaultTransactionBlocks={[{ type: TRANSACTION_BLOCK_TYPE.SEND_ASSET }]}
+            defaultTransactionBlocks={[{ type: TRANSACTION_BLOCK_TYPE.ASSET_BRIDGE }]}
             provider={connectedProvider}
             chainId={chainId}
             themeOverride={themeOverride}
