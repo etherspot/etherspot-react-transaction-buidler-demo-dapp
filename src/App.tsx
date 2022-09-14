@@ -109,7 +109,7 @@ const App = () => {
             outerLabel: '#998ae6',
             innerLabel: '#998ae6',
             topMenu: '#998ae6',
-            main: '#998ae6',
+            main: '#ffeee6',
             topBar: '#998ae6',
             buttonSecondary: '#998ae6',
             card: '#ffeee6',
