@@ -28,7 +28,7 @@ const WalletService = () => Onboard({
 
 const Paragraph = styled.p`
   font-size: 14px;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
   font-family: "Arial", sans;
 `;
 
@@ -40,6 +40,8 @@ const ConnectWalletButton = styled.span`
   margin-right: 20px;
   font-family: "Arial", sans;
   cursor: pointer;
+  margin-top: 20px;
+  display: inline-block;
 
   &:hover {
     opacity: 0.4;
@@ -134,8 +136,8 @@ const App = () => {
       {!connectedProvider && (
         <>
           <Paragraph>Connect part showcases how any dapp maintained web3 connector can interact with Etherspot transaction builder component directly</Paragraph>
-          <ConnectWalletButton onClick={connectWithExternal}>Connect with external wallet</ConnectWalletButton>
-          <ConnectWalletButton onClick={connectWithKeyBased}>Connect with random Key Based</ConnectWalletButton>
+          <ConnectWalletButton onClick={connectWithExternal}>Connect with external Wallet provider</ConnectWalletButton>
+          <ConnectWalletButton onClick={connectWithKeyBased}>Generate Key Based wallet and Connect</ConnectWalletButton>
         </>
       )}
       {connectedProvider && (
