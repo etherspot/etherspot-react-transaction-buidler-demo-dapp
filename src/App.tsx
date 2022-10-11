@@ -101,6 +101,7 @@ const App = () => {
             switchInputActiveTab: '#443d66',
             switchInputInactiveTab: 'transparent',
             pill: '#2b2640',
+            checkboxInputInactive: '#665c99',
           },
           text: {
             selectInput: '#ffeee6',
