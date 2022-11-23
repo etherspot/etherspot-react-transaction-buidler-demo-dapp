@@ -102,6 +102,8 @@ const App = () => {
             switchInputInactiveTab: 'transparent',
             pill: '#2b2640',
             checkboxInputInactive: '#665c99',
+            toDropdownColor: "#292539",
+            selectInputExpandedHover: "#292539",
           },
           text: {
             selectInput: '#ffeee6',
