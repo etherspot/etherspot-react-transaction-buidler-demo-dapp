@@ -5,3 +5,4 @@ if [ "$CF_PAGES_BRANCH" == "develop" ]; then
   npm run build
 else
   npm run build
+fi
