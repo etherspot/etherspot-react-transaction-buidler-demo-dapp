@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@etherspot/react-transaction-buidler": "^0.17.4",
+    "@etherspot/react-transaction-buidler": "etherspot/etherspot-react-transaction-buidler#develop",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",
@@ -20,7 +20,6 @@
     "typescript": "^4.7.4"
   },
   "scripts": {
-    "preinstall": "bash preinstall.sh",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
