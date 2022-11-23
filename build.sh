@@ -1,7 +1,8 @@
 # !/bin/bash
 
 if [ "$CF_PAGES_BRANCH" == "develop" ]; then
-  jq '.dependencies."@etherspot/react-transaction-buidler" =  "etherspot/etherspot-react-transaction-buidler#develop"' package.json > temp-package.json && mv temp-package.json package.json
+  echo "Branch is:" $CF_PAGES_BRANCH
+  jq '.dependencies."@etherspot/react-transaction-buidler" =  "git+https://'"$ETHERSPOT_BOT_GITHUB_TOKEN}"'@github.com/etherspot/etherspot-react-transaction-buidler.git#develop"' package.json > temp-package.json && mv temp-package.json package.json
   npm install
   npm run build
 else
