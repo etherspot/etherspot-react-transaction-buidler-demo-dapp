@@ -5,9 +5,9 @@ import React, {
 import { Etherspot, TRANSACTION_BLOCK_TYPE } from '@etherspot/react-transaction-buidler';
 import styled, { createGlobalStyle } from 'styled-components';
 import Web3 from 'web3';
+import { Web3AuthCore } from '@web3auth/core';
 
 import SignIn from './components/SignIn';
-import { Web3AuthCore } from '@web3auth/core';
 
 const chainId = 1;
 
@@ -101,7 +101,11 @@ const App = () => {
         {!connectedProvider && (
           <SignIn
             onWeb3ProviderSet={(web3Provider) => {
-              if (!web3Provider) return;
+              if (!web3Provider) {
+                setConnectedProvider(null);
+                return;
+              }
+
               const web3 = new Web3(web3Provider as any);
               // @ts-ignore
               setConnectedProvider(web3.currentProvider)
@@ -118,9 +122,16 @@ const App = () => {
               chainId={chainId}
               themeOverride={themeOverride}
               showMenuLogout
-              onLogout={() => {
+              onLogout={async () => {
                 setConnectedProvider(null);
-                if (web3AuthInstance) web3AuthInstance.logout({ cleanup: true });
+                if (!web3AuthInstance) return;
+
+                try {
+                  await web3AuthInstance.logout({ cleanup: true });
+                  await web3AuthInstance.clearCache();
+                } catch (e) {
+                  //
+                }
               }}
             />
           </>

@@ -200,7 +200,9 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet }: SignInProps) => {
       });
 
       web3AuthInstance.on(ADAPTER_EVENTS.DISCONNECTED, () => {
+        setWeb3Auth(null);
         onWeb3ProviderSet(null);
+        initWeb3AuthCore();
       });
 
       await web3AuthInstance.init();
@@ -211,7 +213,7 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet }: SignInProps) => {
 
     initWeb3AuthCore();
     /* eslint-disable-next-line */
-  }, [onWeb3ProviderSet]);
+  }, []);
 
   const loginWithAdapter = async (adapter: WALLET_ADAPTER_TYPE, loginProvider?: LOGIN_PROVIDER_TYPE) => {
     if (isSigningIn) return;
@@ -264,7 +266,6 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet }: SignInProps) => {
         { title: 'WalletConnect', icon: <img src={iconWalletConnect} alt="walletconnect" />, onClick: () => loginWithAdapter(WALLET_ADAPTERS.WALLET_CONNECT_V1) },
         { title: 'Torus EVM', icon: <img src={iconTorus} alt="torus" />, onClick: () => loginWithAdapter(WALLET_ADAPTERS.TORUS_EVM) },
         { title: 'Coinbase', icon: <img src={iconCoinbase} alt="coinbase" />, onClick: () => loginWithAdapter(WALLET_ADAPTERS.COINBASE) },
-        // { title: 'Phantom', icon: <img src={iconPhantom} alt="phantom" />, onClick: () => loginWithAdapter(WALLET_ADAPTERS.PHANTOM) },
       ]
     };
 
