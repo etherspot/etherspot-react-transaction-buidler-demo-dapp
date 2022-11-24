@@ -166,7 +166,7 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet }: SignInProps) => {
         chainConfig: {
           chainNamespace: CHAIN_NAMESPACES.EIP155,
           chainId: process.env.REACT_APP_CHAIN_ID_HEX,
-          rpcTarget: `https://mainnet.infura.io/v3/${process.env.REACT_APP_INFURA_ID}`,
+          rpcTarget: `https://polygon-mainnet.infura.io/v3/${process.env.REACT_APP_INFURA_ID}`,
         },
         storageKey: 'local',
       });

@@ -128,7 +128,7 @@ const App = () => {
 
                 try {
                   await web3AuthInstance.logout({ cleanup: true });
-                  await web3AuthInstance.clearCache();
+                  web3AuthInstance.clearCache();
                 } catch (e) {
                   //
                 }
