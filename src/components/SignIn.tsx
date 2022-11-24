@@ -18,6 +18,7 @@ import { MetamaskAdapter } from '@web3auth/metamask-adapter';
 import { TorusWalletAdapter } from '@web3auth/torus-evm-adapter';
 import { WalletConnectV1Adapter } from '@web3auth/wallet-connect-v1-adapter';
 import QRCodeModal from '@walletconnect/qrcode-modal';
+import { CoinbaseAdapter } from '@web3auth/coinbase-adapter';
 
 import iconMetamask from '../assets/images/icon-metamask.png';
 import iconTorus from '../assets/images/icon-torus.png';
@@ -28,8 +29,6 @@ import iconFacebook from '../assets/images/icon-facebook.png';
 import iconDiscord from '../assets/images/icon-discord.png';
 import iconTwitch from '../assets/images/icon-twitch.png';
 import iconCoinbase from '../assets/images/icon-coinbase.png';
-import iconPhantom from '../assets/images/icon-phantom.png';
-import { CoinbaseAdapter } from '@web3auth/coinbase-adapter';
 
 const Wrapper = styled.div`
   width: 374px;
@@ -145,7 +144,6 @@ const SignInOption = styled.div<{ disabled?: boolean }>`
 `;
 
 const web3AuthClientId = process.env.REACT_APP_WEB3AUTH_CLIENT_ID as string;
-const web3RpcTarget = `https://eth-mainnet.alchemyapi.io/v2/${process.env.REACT_APP_ALCHEMY_API_KEY}/`;
 
 type LOGIN_PROVIDER_TYPE = 'google' | 'facebook' | 'apple' | 'discord' | 'twitch' | 'github' | 'twitter';
 
@@ -168,7 +166,7 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet }: SignInProps) => {
         chainConfig: {
           chainNamespace: CHAIN_NAMESPACES.EIP155,
           chainId: process.env.REACT_APP_CHAIN_ID_HEX,
-          rpcTarget: web3RpcTarget,
+          rpcTarget: `https://mainnet.infura.io/v3/${process.env.REACT_APP_INFURA_ID}`,
         },
         storageKey: 'local',
       });
@@ -212,6 +210,7 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet }: SignInProps) => {
     }
 
     initWeb3AuthCore();
+    /* eslint-disable-next-line */
   }, [onWeb3ProviderSet]);
 
   const loginWithAdapter = async (adapter: WALLET_ADAPTER_TYPE, loginProvider?: LOGIN_PROVIDER_TYPE) => {
@@ -275,6 +274,7 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet }: SignInProps) => {
     const visibleNumber = showSocialLogins ? 6 : 3;
 
     return selectedSignInOptions.slice(0, visibleNumber);
+    /* eslint-disable-next-line */
   }, [showSocialLogins, showMoreOptions]);
 
   return (
