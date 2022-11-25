@@ -7,7 +7,7 @@ if [ "$CF_PAGES_BRANCH" == "develop" ]; then
   jq '.dependencies."@etherspot/react-transaction-buidler" =  "git+https://'"$ETHERSPOT_BOT_GITHUB_TOKEN"'@github.com/etherspot/etherspot-react-transaction-buidler.git#develop"' package.json > temp-package.json && mv temp-package.json package.json
 #   npm install yarn -g
   npm install
-  npm run build
+  NODE_ENV=production npm run build
 else
-  npm run build
+  NODE_ENV=production npm run build
 fi
