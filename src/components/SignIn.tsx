@@ -200,9 +200,7 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet }: SignInProps) => {
       });
 
       web3AuthInstance.on(ADAPTER_EVENTS.DISCONNECTED, () => {
-        setWeb3Auth(null);
         onWeb3ProviderSet(null);
-        initWeb3AuthCore();
       });
 
       await web3AuthInstance.init();

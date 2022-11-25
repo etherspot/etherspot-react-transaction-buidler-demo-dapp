@@ -121,9 +121,7 @@ const App = () => {
               provider={connectedProvider}
               chainId={chainId}
               themeOverride={themeOverride}
-              showMenuLogout
               onLogout={async () => {
-                setConnectedProvider(null);
                 if (!web3AuthInstance) return;
 
                 try {
@@ -132,7 +130,10 @@ const App = () => {
                 } catch (e) {
                   //
                 }
+
+                setConnectedProvider(null);
               }}
+              showMenuLogout
             />
           </>
         )}
