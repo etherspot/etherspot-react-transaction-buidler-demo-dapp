@@ -87,14 +87,7 @@ const SwitchOption = styled.div<{ isActive?: boolean }>`
   text-align: center;
   min-height: 28px;
   line-height: 28px;
-
-  ${({ isActive }) => !isActive && `
-    cursor: pointer;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  `}
+  cursor: pointer;
 
   ${({ isActive }) => isActive && `
     font-weight: bold;

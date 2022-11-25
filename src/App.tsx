@@ -19,7 +19,9 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 const Wrapper = styled.div`
-  padding: 5px;
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
 `;
 
 const ToggleThemeButton = styled.span`
@@ -114,7 +116,7 @@ const App = () => {
           />
         )}
         {connectedProvider && (
-          <>
+          <div>
             <ToggleThemeButton onClick={() => setUseDashboardTheme(!useDashboardTheme)}>Toggle theme</ToggleThemeButton>
             <Etherspot
               defaultTransactionBlocks={[{ type: TRANSACTION_BLOCK_TYPE.ASSET_BRIDGE }]}
@@ -135,7 +137,7 @@ const App = () => {
               }}
               showMenuLogout
             />
-          </>
+          </div>
         )}
       </Wrapper>
     </>
