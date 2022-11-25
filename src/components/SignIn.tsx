@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import {
+  useCallback,
   useEffect,
   useMemo,
   useState,
@@ -206,6 +207,7 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet }: SignInProps) => {
       await web3AuthInstance.init();
 
       setWeb3Auth(web3AuthInstance);
+
       if (onWeb3AuthInstanceSet) onWeb3AuthInstanceSet(web3AuthInstance);
     }
 
@@ -213,9 +215,7 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet }: SignInProps) => {
     /* eslint-disable-next-line */
   }, []);
 
-  const loginWithAdapter = async (adapter: WALLET_ADAPTER_TYPE, loginProvider?: LOGIN_PROVIDER_TYPE) => {
-    if (isSigningIn) return;
-
+  const loginWithAdapter = useCallback(async (adapter: WALLET_ADAPTER_TYPE, loginProvider?: LOGIN_PROVIDER_TYPE) => {
     setErrorMessage(null);
     setIsSigningIn(true);
 
@@ -242,9 +242,12 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet }: SignInProps) => {
 
     onWeb3ProviderSet(web3authProvider);
     setIsSigningIn(false);
-  }
+  }, [web3Auth, onWeb3ProviderSet]);
 
-  const loginWithOpenLogin = async (loginProvider: LOGIN_PROVIDER_TYPE) => loginWithAdapter(WALLET_ADAPTERS.OPENLOGIN, loginProvider);
+  const loginWithOpenLogin = useCallback(
+    async (loginProvider: LOGIN_PROVIDER_TYPE) => loginWithAdapter(WALLET_ADAPTERS.OPENLOGIN, loginProvider),
+    [loginWithAdapter],
+  );
 
   useEffect(() => { setErrorMessage(null); }, [showSocialLogins, showMoreOptions]);
 
@@ -273,8 +276,7 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet }: SignInProps) => {
     const visibleNumber = showSocialLogins ? 6 : 3;
 
     return selectedSignInOptions.slice(0, visibleNumber);
-    /* eslint-disable-next-line */
-  }, [showSocialLogins, showMoreOptions]);
+  }, [showSocialLogins, showMoreOptions, loginWithAdapter, loginWithOpenLogin]);
 
   return (
     <Wrapper>
