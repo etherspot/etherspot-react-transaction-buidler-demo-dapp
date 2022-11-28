@@ -12,6 +12,10 @@ import SignIn from './components/SignIn';
 const chainId = 1;
 
 const GlobalStyle = createGlobalStyle`
+  body {
+    background: #191726;
+  }
+
   * {
     margin: 0;
     padding: 0;
@@ -27,13 +31,14 @@ const Wrapper = styled.div`
 const ToggleThemeButton = styled.span`
   padding: 10px;
   display: inline-block;
-  border: 1px solid #000;
+  border: 1px solid #fff;
   text-transform: uppercase;
   font-size: 12px;
   margin-right: 20px;
   font-family: "Arial", sans;
   cursor: pointer;
   margin-bottom: 15px;
+  color: #fff;
 
   &:hover {
     opacity: 0.4;
@@ -102,7 +107,7 @@ const App = () => {
       <Wrapper>
         {!connectedProvider && (
           <SignIn
-            onWeb3ProviderSet={(web3Provider) => {
+            onWeb3ProviderSet={async (web3Provider) => {
               if (!web3Provider) {
                 setConnectedProvider(null);
                 return;
