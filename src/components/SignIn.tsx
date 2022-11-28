@@ -12,7 +12,7 @@ import {
   WALLET_ADAPTERS,
 } from '@web3auth/base';
 import { Web3AuthCore } from '@web3auth/core';
-import { NetworkSwitch } from '@web3auth/ui'
+import { NetworkSwitch } from '@web3auth/ui';
 import { OpenloginAdapter } from '@web3auth/openlogin-adapter';
 import { BsGithub, BsTwitter } from 'react-icons/bs';
 import { AiOutlineMail } from 'react-icons/ai';
@@ -277,6 +277,7 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet }: SignInProps) => {
       });
 
       await web3AuthInstance.init();
+      setIsSigningIn(false);
 
       setWeb3Auth(web3AuthInstance);
 
