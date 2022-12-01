@@ -4,7 +4,7 @@ if [ "$CF_PAGES_BRANCH" == "develop" || "$CF_PAGES_BRANCH" == "feature/*" ]; the
   echo "Branch is:" $CF_PAGES_BRANCH
   mkdir .ssh && touch id_ed2551
   echo $ETHERSPOT_BUIDLER_PRIVATE_KEY | base64 --decode  >> .ssh/id_ed2551
-  jq '.dependencies."@etherspot/react-transaction-buidler" =  "git+https://'"$ETHERSPOT_BOT_GITHUB_TOKEN"'@github.com/etherspot/etherspot-react-transaction-buidler.git#4ea68b1c087fbd83dcba1789ef57133e7cace440"' package.json > temp-package.json && mv temp-package.json package.json
+  jq '.dependencies."@etherspot/react-transaction-buidler" =  "git+https://'"$ETHERSPOT_BOT_GITHUB_TOKEN"'@github.com/etherspot/etherspot-react-transaction-buidler.git#ebc4b72d8dc8d1bf1186e83eb2a40ed9bf553c48"' package.json > temp-package.json && mv temp-package.json package.json
 #   npm install yarn -g
   npm install
   NODE_ENV=production npm run build
