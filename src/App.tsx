@@ -1,62 +1,44 @@
 import React, {
-  useCallback,
   useMemo,
   useState,
 } from 'react';
 import { Etherspot, TRANSACTION_BLOCK_TYPE } from '@etherspot/react-transaction-buidler';
-import { ethers } from 'ethers';
-import Onboard from 'bnc-onboard';
-import styled from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components';
+import Web3 from 'web3';
+import { Web3AuthCore } from '@web3auth/core';
 
-const wallets = [
-  { walletName: "metamask", preferred: true },
-  {
-    walletName: "walletConnect",
-    preferred: true,
-    rpc: {
-      1: `https://mainnet.infura.io/v3/${process.env.REACT_APP_INFURA_ID}`,
-    }
-  },
-];
+import SignIn from './components/SignIn';
 
 const chainId = 1;
 
-const WalletService = () => Onboard({
-  walletSelect: { wallets },
-  networkId: chainId,
-});
+const GlobalStyle = createGlobalStyle`
+  body {
+    background: #191726;
+  }
 
-const Paragraph = styled.p`
-  font-size: 14px;
-  margin-bottom: 20px;
-  font-family: "Arial", sans;
-`;
-
-const ConnectWalletButton = styled.span`
-  padding: 10px;
-  border: 1px solid #000;
-  text-transform: uppercase;
-  font-size: 12px;
-  margin-right: 20px;
-  font-family: "Arial", sans;
-  cursor: pointer;
-  margin-top: 20px;
-  display: inline-block;
-
-  &:hover {
-    opacity: 0.4;
+  * {
+    margin: 0;
+    padding: 0;
   }
 `;
+
+const Wrapper = styled.div`
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+`;
+
 const ToggleThemeButton = styled.span`
   padding: 10px;
   display: inline-block;
-  border: 1px solid #000;
+  border: 1px solid #fff;
   text-transform: uppercase;
   font-size: 12px;
   margin-right: 20px;
   font-family: "Arial", sans;
   cursor: pointer;
   margin-bottom: 15px;
+  color: #fff;
 
   &:hover {
     opacity: 0.4;
@@ -66,20 +48,7 @@ const ToggleThemeButton = styled.span`
 const App = () => {
   const [connectedProvider, setConnectedProvider] = useState(null);
   const [useDashboardTheme, setUseDashboardTheme] = useState(false);
-
-  const walletService = useMemo(() => WalletService(), []);
-
-  const connectWithExternal = useCallback(async () => {
-    await walletService.walletSelect().catch(() => null);
-    await walletService.walletCheck().catch(() => null);
-    setConnectedProvider(walletService.getState().wallet.provider);
-  }, [walletService]);
-
-  const connectWithKeyBased = useCallback(() => {
-    const wallet = ethers.Wallet.createRandom();
-    // @ts-ignore
-    setConnectedProvider(wallet);
-  }, []);
+  const [web3AuthInstance, setWeb3AuthInstance] = useState<Web3AuthCore | null>(null);
 
   const themeOverride = useMemo(() => {
     if (!useDashboardTheme) return undefined;
@@ -102,6 +71,8 @@ const App = () => {
             switchInputInactiveTab: 'transparent',
             pill: '#2b2640',
             checkboxInputInactive: '#665c99',
+            dropdownHoverColor: "#443d66",
+            selectInputExpandedHover: "#443d66",
           },
           text: {
             selectInput: '#ffeee6',
@@ -134,24 +105,48 @@ const App = () => {
 
   return (
     <>
-      {!connectedProvider && (
-        <>
-          <Paragraph>Connect part showcases how any dapp maintained web3 connector can interact with Etherspot transaction builder component directly</Paragraph>
-          <ConnectWalletButton onClick={connectWithExternal}>Connect with external Wallet provider</ConnectWalletButton>
-          <ConnectWalletButton onClick={connectWithKeyBased}>Generate Key Based wallet and Connect</ConnectWalletButton>
-        </>
-      )}
-      {connectedProvider && (
-        <div>
-          <ToggleThemeButton onClick={() => setUseDashboardTheme(!useDashboardTheme)}>Toggle theme</ToggleThemeButton>
-          <Etherspot
-            defaultTransactionBlocks={[{ type: TRANSACTION_BLOCK_TYPE.ASSET_BRIDGE }]}
-            provider={connectedProvider}
-            chainId={chainId}
-            themeOverride={themeOverride}
+      <GlobalStyle />
+      <Wrapper>
+        {!connectedProvider && (
+          <SignIn
+            onWeb3ProviderSet={async (web3Provider) => {
+              if (!web3Provider) {
+                setConnectedProvider(null);
+                return;
+              }
+
+              const web3 = new Web3(web3Provider as any);
+              // @ts-ignore
+              setConnectedProvider(web3.currentProvider)
+            }}
+            onWeb3AuthInstanceSet={setWeb3AuthInstance}
           />
-        </div>
-      )}
+        )}
+        {connectedProvider && (
+          <div>
+            <ToggleThemeButton onClick={() => setUseDashboardTheme(!useDashboardTheme)}>Toggle theme</ToggleThemeButton>
+            <Etherspot
+              defaultTransactionBlocks={[{ type: TRANSACTION_BLOCK_TYPE.ASSET_BRIDGE }]}
+              provider={connectedProvider}
+              chainId={chainId}
+              themeOverride={themeOverride}
+              onLogout={async () => {
+                if (!web3AuthInstance) return;
+
+                try {
+                  await web3AuthInstance.logout({ cleanup: true });
+                  web3AuthInstance.clearCache();
+                } catch (e) {
+                  //
+                }
+
+                setConnectedProvider(null);
+              }}
+              showMenuLogout
+            />
+          </div>
+        )}
+      </Wrapper>
     </>
   );
 }
