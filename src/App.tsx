@@ -143,6 +143,7 @@ const App = () => {
                 setConnectedProvider(null);
               }}
               showMenuLogout
+              smartWalletOnly
             />
           </div>
         )}
