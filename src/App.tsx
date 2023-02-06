@@ -19,7 +19,7 @@ import SignIn from './components/SignIn';
 
 const { chains, provider, webSocketProvider } = configureChains(
   [mainnet],
-  [infuraProvider({ apiKey: process.env.REACT_APP_INFURA_KEY ?? '' }), publicProvider()],
+  [infuraProvider({ apiKey: process.env.REACT_APP_INFURA_ID ?? '' }), publicProvider()],
 )
 
 const client = createClient({
