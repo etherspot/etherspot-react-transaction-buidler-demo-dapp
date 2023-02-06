@@ -1,4 +1,4 @@
-import React, {
+import {
   useMemo,
   useState,
 } from 'react';
@@ -6,8 +6,50 @@ import { Etherspot, TRANSACTION_BLOCK_TYPE } from '@etherspot/react-transaction-
 import styled, { createGlobalStyle } from 'styled-components';
 import Web3 from 'web3';
 import { Web3AuthCore } from '@web3auth/core';
+import { WagmiConfig, createClient, configureChains, mainnet } from 'wagmi'
+import { infuraProvider } from 'wagmi/providers/infura';
+import { publicProvider } from 'wagmi/providers/public'
+ 
+import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
+import { InjectedConnector } from 'wagmi/connectors/injected'
+import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
+import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 
 import SignIn from './components/SignIn';
+
+const { chains, provider, webSocketProvider } = configureChains(
+  [mainnet],
+  [infuraProvider({ apiKey: process.env.REACT_APP_INFURA_KEY ?? '' }), publicProvider()],
+)
+
+const client = createClient({
+  autoConnect: true,
+  connectors: [
+    new MetaMaskConnector({ chains }),
+    new CoinbaseWalletConnector({
+      chains,
+      options: {
+        appName: 'wagmi',
+      },
+    }),
+    new WalletConnectConnector({
+      chains,
+      options: {
+        qrcode: true,
+      },
+    }),
+    new InjectedConnector({
+      chains,
+      options: {
+        name: 'Injected',
+        shimDisconnect: true,
+      },
+    }),
+  ],
+  provider,
+  webSocketProvider,
+})
+
 
 const chainId = 1;
 
@@ -103,51 +145,54 @@ const App = () => {
       }
   }, [useDashboardTheme]);
 
+
   return (
-    <>
-      <GlobalStyle />
-      <Wrapper>
-        {!connectedProvider && (
-          <SignIn
-            onWeb3ProviderSet={async (web3Provider) => {
-              if (!web3Provider) {
-                setConnectedProvider(null);
-                return;
-              }
-
-              const web3 = new Web3(web3Provider as any);
-              // @ts-ignore
-              setConnectedProvider(web3.currentProvider)
-            }}
-            onWeb3AuthInstanceSet={setWeb3AuthInstance}
-          />
-        )}
-        {connectedProvider && (
-          <div>
-            <ToggleThemeButton onClick={() => setUseDashboardTheme(!useDashboardTheme)}>Toggle theme</ToggleThemeButton>
-            <Etherspot
-              defaultTransactionBlocks={[{ type: TRANSACTION_BLOCK_TYPE.ASSET_BRIDGE }]}
-              provider={connectedProvider}
-              chainId={chainId}
-              themeOverride={themeOverride}
-              onLogout={async () => {
-                if (!web3AuthInstance) return;
-
-                try {
-                  await web3AuthInstance.logout({ cleanup: true });
-                  web3AuthInstance.clearCache();
-                } catch (e) {
-                  //
+    <WagmiConfig client={client}>
+      <>
+        <GlobalStyle />
+        <Wrapper>
+          {!connectedProvider && (
+            <SignIn
+              onWeb3ProviderSet={async (web3Provider, isWagmi) => {
+                if (!web3Provider) {
+                  setConnectedProvider(null);
+                  return;
                 }
 
-                setConnectedProvider(null);
+                const web3 = new Web3(web3Provider as any);
+                // @ts-ignore
+                setConnectedProvider(isWagmi ? web3.currentProvider.provider : web3.currentProvider)
               }}
-              showMenuLogout
+              onWeb3AuthInstanceSet={setWeb3AuthInstance}
             />
-          </div>
-        )}
-      </Wrapper>
-    </>
+          )}
+          {connectedProvider && (
+            <div>
+              <ToggleThemeButton onClick={() => setUseDashboardTheme(!useDashboardTheme)}>Toggle theme</ToggleThemeButton>
+              <Etherspot
+                defaultTransactionBlocks={[{ type: TRANSACTION_BLOCK_TYPE.ASSET_BRIDGE }]}
+                provider={connectedProvider}
+                chainId={chainId}
+                themeOverride={themeOverride}
+                onLogout={async () => {
+                  if (!web3AuthInstance) return;
+
+                  try {
+                    await web3AuthInstance.logout({ cleanup: true });
+                    web3AuthInstance.clearCache();
+                  } catch (e) {
+                    //
+                  }
+
+                  setConnectedProvider(null);
+                }}
+                showMenuLogout
+              />
+            </div>
+          )}
+        </Wrapper>
+      </>
+    </WagmiConfig>
   );
 }
 

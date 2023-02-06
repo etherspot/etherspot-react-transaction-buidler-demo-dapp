@@ -21,6 +21,7 @@ import { TorusWalletAdapter } from '@web3auth/torus-evm-adapter';
 import { WalletConnectV1Adapter } from '@web3auth/wallet-connect-v1-adapter';
 import QRCodeModal from '@walletconnect/qrcode-modal';
 import { CoinbaseAdapter } from '@web3auth/coinbase-adapter';
+import { useConnect, useAccount, useSigner } from 'wagmi';
 
 import iconMetamask from '../assets/images/icon-metamask.png';
 import iconTorus from '../assets/images/icon-torus.png';
@@ -202,7 +203,7 @@ const web3AuthClientId = process.env.REACT_APP_WEB3AUTH_CLIENT_ID as string;
 type LOGIN_PROVIDER_TYPE = 'google' | 'facebook' | 'apple' | 'discord' | 'twitch' | 'github' | 'twitter' | 'email_passwordless'
 
 interface SignInProps {
-  onWeb3ProviderSet: (web3Provider: any) => void;
+  onWeb3ProviderSet: (web3Provider: any, isWagmi?: boolean) => void;
   onWeb3AuthInstanceSet: (instance: Web3AuthCore) => void;
 }
 
@@ -283,6 +284,14 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet }: SignInProps) => {
     /* eslint-disable-next-line */
   }, []);
 
+  const { isConnected } = useAccount()
+  const {data: signer} = useSigner();
+  if(isConnected) {
+    onWeb3ProviderSet(signer?.provider, true);
+  }
+
+  const { connect, connectors } = useConnect()
+
   const loginWithAdapter = useCallback(async (
     adapter: WALLET_ADAPTER_TYPE,
     loginProvider?: LOGIN_PROVIDER_TYPE,
@@ -310,7 +319,7 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet }: SignInProps) => {
       setIsSigningIn(false);
       return;
     }
-
+    console.log("web3authProvider", web3authProvider)
     onWeb3ProviderSet(web3authProvider);
     setEmail('');
     setShowEmailLogin(false);
@@ -326,8 +335,20 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet }: SignInProps) => {
   );
 
   useEffect(() => { setErrorMessage(null); }, [showSocialLogins, showMoreOptions]);
-
+  const getIconByName = (name: string) => {
+    switch(name) {
+      case 'MetaMask':
+        return <img src={iconMetamask} alt="metamask" />
+      case 'WalletConnect': 
+        return <img src={iconWalletConnect} alt="walletconnect" />
+      case 'Coinbase Wallet':
+        return <img src={iconCoinbase} alt="coinbase" />
+      default:
+        return <img src={iconTorus} alt="torus" />
+    }
+  }
   const visibleSignInOptions = useMemo(() => {
+
     const signInOptions = {
       social: [
         { title: 'Google', icon: <img src={iconGoogle} alt="google" />, onClick: () => loginWithOpenLogin('google') },
@@ -340,10 +361,15 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet }: SignInProps) => {
         { title: 'Twitch', icon: <img src={iconTwitch} alt="twitch" />, onClick: () => loginWithOpenLogin('twitch') },
       ],
       web3: [
-        { title: 'MetaMask', icon: <img src={iconMetamask} alt="metamask" />, onClick: () => loginWithAdapter(WALLET_ADAPTERS.METAMASK) },
-        { title: 'WalletConnect', icon: <img src={iconWalletConnect} alt="walletconnect" />, onClick: () => loginWithAdapter(WALLET_ADAPTERS.WALLET_CONNECT_V1) },
-        { title: 'Torus EVM', icon: <img src={iconTorus} alt="torus" />, onClick: () => loginWithAdapter(WALLET_ADAPTERS.TORUS_EVM) },
-        { title: 'Coinbase', icon: <img src={iconCoinbase} alt="coinbase" />, onClick: () => loginWithAdapter(WALLET_ADAPTERS.COINBASE) },
+        ...connectors.map((connector) => ({
+          title: connector.name,
+          icon: getIconByName(connector.name),
+          onClick: () => connect({ connector })
+        })),
+        // { title: 'MetaMask', icon: <img src={iconMetamask} alt="metamask" />, onClick: () => connect({ onConnectorClick('MetaMask') }) },
+        // { title: 'WalletConnect', icon: <img src={iconWalletConnect} alt="walletconnect" />, onClick: () => loginWithAdapter(WALLET_ADAPTERS.WALLET_CONNECT_V1) },
+        // { title: 'Torus EVM', icon: <img src={iconTorus} alt="torus" />, onClick: () => loginWithAdapter(WALLET_ADAPTERS.TORUS_EVM) },
+        // { title: 'Coinbase', icon: <img src={iconCoinbase} alt="coinbase" />, onClick: () => loginWithAdapter(WALLET_ADAPTERS.COINBASE) },
       ]
     };
 
@@ -353,7 +379,7 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet }: SignInProps) => {
     const visibleNumber = showSocialLogins ? 6 : 3;
 
     return selectedSignInOptions.slice(0, visibleNumber);
-  }, [showSocialLogins, showMoreOptions, loginWithAdapter, loginWithOpenLogin]);
+  }, [showSocialLogins, showMoreOptions, loginWithOpenLogin, connectors, connect]);
 
   if (isSigningIn) {
     return (
@@ -432,6 +458,8 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet }: SignInProps) => {
           Show {showMoreOptions ? 'less' : 'more'} options
         </WrapperTextClickable>
       </>
+      <div>
+    </div>
     </Wrapper>
   )
 }
