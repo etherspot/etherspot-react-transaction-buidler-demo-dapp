@@ -5,12 +5,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Send Slack deployment notifications
-      uses: arddluma/cloudflare-pages-slack-notification@v2.3
+      uses: arddluma/cloudflare-pages-slack-notification@v3
       with:
-        accountEmail: ${{ secrets.CF_ACCOUNT_EMAIL  }}
-        apiKey: ${{ secrets.CF_API_KEY  }}
+        apiToken: ${{ secrets.CF_API_TOKEN }}
         accountId: ${{ secrets.CF_ACC_ID  }}
         project: ${{ secrets.CF_PROJECT  }}
         githubToken: ${{ secrets.GITHUB_TOKEN }}
