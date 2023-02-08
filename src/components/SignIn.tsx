@@ -285,8 +285,8 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet }: SignInProps) => {
   }, []);
 
   const { isConnected } = useAccount()
-  const {data: signer} = useSigner();
-  if(isConnected) {
+  const { data: signer } = useSigner();
+  if (isConnected) {
     onWeb3ProviderSet(signer?.provider, true);
   }
 
@@ -319,7 +319,6 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet }: SignInProps) => {
       setIsSigningIn(false);
       return;
     }
-    console.log("web3authProvider", web3authProvider)
     onWeb3ProviderSet(web3authProvider);
     setEmail('');
     setShowEmailLogin(false);
@@ -366,10 +365,6 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet }: SignInProps) => {
           icon: getIconByName(connector.name),
           onClick: () => connect({ connector })
         })),
-        // { title: 'MetaMask', icon: <img src={iconMetamask} alt="metamask" />, onClick: () => connect({ onConnectorClick('MetaMask') }) },
-        // { title: 'WalletConnect', icon: <img src={iconWalletConnect} alt="walletconnect" />, onClick: () => loginWithAdapter(WALLET_ADAPTERS.WALLET_CONNECT_V1) },
-        // { title: 'Torus EVM', icon: <img src={iconTorus} alt="torus" />, onClick: () => loginWithAdapter(WALLET_ADAPTERS.TORUS_EVM) },
-        // { title: 'Coinbase', icon: <img src={iconCoinbase} alt="coinbase" />, onClick: () => loginWithAdapter(WALLET_ADAPTERS.COINBASE) },
       ]
     };
 

@@ -9,11 +9,12 @@ import { Web3AuthCore } from '@web3auth/core';
 import { WagmiConfig, createClient, configureChains, mainnet } from 'wagmi'
 import { infuraProvider } from 'wagmi/providers/infura';
 import { publicProvider } from 'wagmi/providers/public'
- 
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
+
+
 
 import SignIn from './components/SignIn';
 
