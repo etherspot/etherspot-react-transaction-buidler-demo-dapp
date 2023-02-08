@@ -21,7 +21,7 @@ import { TorusWalletAdapter } from '@web3auth/torus-evm-adapter';
 import { WalletConnectV1Adapter } from '@web3auth/wallet-connect-v1-adapter';
 import QRCodeModal from '@walletconnect/qrcode-modal';
 import { CoinbaseAdapter } from '@web3auth/coinbase-adapter';
-import { useConnect, useAccount, useSigner } from 'wagmi';
+import { useConnect, useAccount, useSigner, useDisconnect } from 'wagmi';
 
 import iconMetamask from '../assets/images/icon-metamask.png';
 import iconTorus from '../assets/images/icon-torus.png';
@@ -205,9 +205,10 @@ type LOGIN_PROVIDER_TYPE = 'google' | 'facebook' | 'apple' | 'discord' | 'twitch
 interface SignInProps {
   onWeb3ProviderSet: (web3Provider: any, isWagmi?: boolean) => void;
   onWeb3AuthInstanceSet: (instance: Web3AuthCore) => void;
+  setWagmiLogout: (func: Function) => void;
 }
 
-const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet }: SignInProps) => {
+const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet, setWagmiLogout }: SignInProps) => {
   const [showSocialLogins, setShowSocialLogins] = useState(true);
   const [showMoreOptions, setShowMoreOptions] = useState(false);
   const [web3Auth, setWeb3Auth] = useState<Web3AuthCore | null>(null);
@@ -285,10 +286,15 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet }: SignInProps) => {
   }, []);
 
   const { isConnected } = useAccount()
+  const { disconnect } = useDisconnect()
   const { data: signer } = useSigner();
-  if (isConnected) {
-    onWeb3ProviderSet(signer?.provider, true);
-  }
+
+  useEffect(() => {
+    if (isConnected) {
+      onWeb3ProviderSet(signer?.provider, true);
+      setWagmiLogout(disconnect)
+    }
+  }, [isConnected, signer, onWeb3ProviderSet])
 
   const { connect, connectors } = useConnect()
 
