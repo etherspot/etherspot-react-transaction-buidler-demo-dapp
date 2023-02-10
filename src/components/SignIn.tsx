@@ -340,18 +340,12 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet, setWagmiLogout }: Si
   );
 
   useEffect(() => { setErrorMessage(null); }, [showSocialLogins, showMoreOptions]);
-  const getIconByName = (name: string) => {
-    switch(name) {
-      case 'MetaMask':
-        return <img src={iconMetamask} alt="metamask" />
-      case 'WalletConnect': 
-        return <img src={iconWalletConnect} alt="walletconnect" />
-      case 'Coinbase Wallet':
-        return <img src={iconCoinbase} alt="coinbase" />
-      default:
-        return <img src={iconTorus} alt="torus" />
-    }
-  }
+
+  const iconByName: Record<string, JSX.Element> = {
+    MetaMask: <img src={iconMetamask} alt="metamask" />,
+    WalletConnect: <img src={iconWalletConnect} alt="walletconnect" />,
+    'Coinbase Wallet': <img src={iconCoinbase} alt="coinbase" />,
+  };
   const visibleSignInOptions = useMemo(() => {
 
     const signInOptions = {
@@ -368,7 +362,7 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet, setWagmiLogout }: Si
       web3: [
         ...connectors.map((connector) => ({
           title: connector.name,
-          icon: getIconByName(connector.name),
+          icon: iconByName[connector.name],
           onClick: () => connect({ connector })
         })),
       ]
@@ -459,8 +453,6 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet, setWagmiLogout }: Si
           Show {showMoreOptions ? 'less' : 'more'} options
         </WrapperTextClickable>
       </>
-      <div>
-    </div>
     </Wrapper>
   )
 }

@@ -7,7 +7,6 @@ import { WagmiConfig, createClient, configureChains, mainnet } from 'wagmi';
 import { infuraProvider } from 'wagmi/providers/infura';
 import { publicProvider } from 'wagmi/providers/public';
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet';
-import { InjectedConnector } from 'wagmi/connectors/injected';
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 
@@ -27,7 +26,7 @@ const client = createClient({
     new CoinbaseWalletConnector({
       chains,
       options: {
-        appName: 'wagmi',
+        appName: 'Etherspot Buidler',
       },
     }),
     new WalletConnectConnector({
@@ -35,14 +34,7 @@ const client = createClient({
       options: {
         qrcode: true,
       },
-    }),
-    new InjectedConnector({
-      chains,
-      options: {
-        name: 'Injected',
-        shimDisconnect: true,
-      },
-    }),
+    })
   ],
   provider,
   webSocketProvider,
@@ -89,7 +81,7 @@ const App = () => {
   const [connectedProvider, setConnectedProvider] = useState(null);
   const [useDashboardTheme, setUseDashboardTheme] = useState(false);
   const [web3AuthInstance, setWeb3AuthInstance] = useState<Web3AuthCore | null>(null);
-  const [wagmiLogout, setWagmiLogout2] = useState<Function>();
+  const [wagmiLogout, setWagmiLogout] = useState<Function | null>();
 
   const themeOverride = useMemo(() => {
     if (!useDashboardTheme) return undefined;
@@ -166,56 +158,54 @@ const App = () => {
       },
     };
   }, [useDashboardTheme]);
-  
   return (
     <WagmiConfig client={client}>
-      <>
-        <GlobalStyle />
-        <Wrapper>
-          {!connectedProvider && (
-            <SignIn
-              onWeb3ProviderSet={async (web3Provider, isWagmi) => {
-                if (!web3Provider) {
-                  setConnectedProvider(null);
-                  return;
+      <GlobalStyle />
+      <Wrapper>
+        {!connectedProvider && (
+          <SignIn
+            onWeb3ProviderSet={async (web3Provider, isWagmi) => {
+              if (!web3Provider) {
+                setConnectedProvider(null);
+                return;
+              }
+
+              const web3 = new Web3(web3Provider as any);
+              // @ts-ignore
+              setConnectedProvider(isWagmi ? web3.currentProvider.provider : web3.currentProvider)
+            }}
+            onWeb3AuthInstanceSet={setWeb3AuthInstance}
+            setWagmiLogout={(func) => {
+              setWagmiLogout(() => func)
+            }}
+          />
+        )}
+        {connectedProvider && (
+          <div>
+            <ToggleThemeButton onClick={() => setUseDashboardTheme(!useDashboardTheme)}>Toggle theme</ToggleThemeButton>
+            <Etherspot
+              defaultTransactionBlocks={[{ type: TRANSACTION_BLOCK_TYPE.ASSET_BRIDGE }]}
+              provider={connectedProvider}
+              chainId={chainId}
+              themeOverride={themeOverride}
+              onLogout={async () => {
+                if (wagmiLogout) wagmiLogout();
+                if (!web3AuthInstance) return;
+
+                try {
+                  await web3AuthInstance.logout({ cleanup: true });
+                  web3AuthInstance.clearCache();
+                } catch (e) {
+                  //
                 }
 
-                const web3 = new Web3(web3Provider as any);
-                // @ts-ignore
-                setConnectedProvider(isWagmi ? web3.currentProvider.provider : web3.currentProvider)
+                setConnectedProvider(null);
               }}
-              onWeb3AuthInstanceSet={setWeb3AuthInstance}
-              setWagmiLogout={(func) => {
-                setWagmiLogout2(() => func)
-              }}
+              showMenuLogout
             />
-          )}
-          {connectedProvider && (
-            <div>
-              <ToggleThemeButton onClick={() => setUseDashboardTheme(!useDashboardTheme)}>Toggle theme</ToggleThemeButton>
-              <Etherspot
-                defaultTransactionBlocks={[{ type: TRANSACTION_BLOCK_TYPE.ASSET_BRIDGE }]}
-                provider={connectedProvider}
-                chainId={chainId}
-                themeOverride={themeOverride}
-                onLogout={async () => {
-                  if(wagmiLogout) wagmiLogout();
-                  if (!web3AuthInstance) return;
-                  try {
-                    await web3AuthInstance.logout({ cleanup: true });
-                    web3AuthInstance.clearCache();
-                  } catch (e) {
-                    //
-                  }
-
-                  setConnectedProvider(null);
-                }}
-                showMenuLogout
-              />
-            </div>
-          )}
-        </Wrapper>
-      </>
+          </div>
+        )}
+      </Wrapper>
     </WagmiConfig>
   );
 };
