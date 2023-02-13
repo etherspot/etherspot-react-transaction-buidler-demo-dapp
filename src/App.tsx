@@ -10,8 +10,6 @@ import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet';
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 
-
-
 import SignIn from './components/SignIn';
 
 const { chains, provider, webSocketProvider } = configureChains(
@@ -34,7 +32,7 @@ const client = createClient({
       options: {
         qrcode: true,
       },
-    })
+    }),
   ],
   provider,
   webSocketProvider,
