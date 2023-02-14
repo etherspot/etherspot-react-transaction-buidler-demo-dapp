@@ -24,7 +24,6 @@ import { CoinbaseAdapter } from '@web3auth/coinbase-adapter';
 import { useConnect, useAccount, useSigner, useDisconnect } from 'wagmi';
 
 import iconMetamask from '../assets/images/icon-metamask.png';
-import iconTorus from '../assets/images/icon-torus.png';
 import iconWalletConnect from '../assets/images/icon-walletconnect.png';
 import iconGoogle from '../assets/images/icon-google.png';
 import iconApple from '../assets/images/icon-apple.png';
@@ -205,7 +204,7 @@ type LOGIN_PROVIDER_TYPE = 'google' | 'facebook' | 'apple' | 'discord' | 'twitch
 interface SignInProps {
   onWeb3ProviderSet: (web3Provider: any, isWagmi?: boolean) => void;
   onWeb3AuthInstanceSet: (instance: Web3AuthCore) => void;
-  setWagmiLogout: (func: Function) => void;
+  setWagmiLogout: React.Dispatch<React.SetStateAction<Function | null>>;
 }
 
 const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet, setWagmiLogout }: SignInProps) => {
@@ -285,18 +284,18 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet, setWagmiLogout }: Si
     /* eslint-disable-next-line */
   }, []);
 
-  const { isConnected } = useAccount()
-  const { disconnect } = useDisconnect()
+  const { isConnected } = useAccount();
+  const { disconnect } = useDisconnect();
   const { data: signer } = useSigner();
 
   useEffect(() => {
     if (isConnected) {
       onWeb3ProviderSet(signer?.provider, true);
-      setWagmiLogout(disconnect)
+      setWagmiLogout(() => disconnect)
     }
   }, [isConnected, signer, onWeb3ProviderSet])
 
-  const { connect, connectors } = useConnect()
+  const { connect, connectors } = useConnect();
 
   const loginWithAdapter = useCallback(async (
     adapter: WALLET_ADAPTER_TYPE,
@@ -341,10 +340,10 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet, setWagmiLogout }: Si
 
   useEffect(() => { setErrorMessage(null); }, [showSocialLogins, showMoreOptions]);
 
-  const iconByName: Record<string, JSX.Element> = {
-    MetaMask: <img src={iconMetamask} alt="metamask" />,
-    WalletConnect: <img src={iconWalletConnect} alt="walletconnect" />,
-    'Coinbase Wallet': <img src={iconCoinbase} alt="coinbase" />,
+  const iconById: Record<string, JSX.Element> = {
+    metaMask: <img src={iconMetamask} alt="metamask" />,
+    walletConnect: <img src={iconWalletConnect} alt="walletconnect" />,
+    coinbaseWallet: <img src={iconCoinbase} alt="coinbase" />,
   };
   const visibleSignInOptions = useMemo(() => {
 
@@ -362,7 +361,7 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet, setWagmiLogout }: Si
       web3: [
         ...connectors.map((connector) => ({
           title: connector.name,
-          icon: iconByName[connector.name],
+          icon: iconById[connector.id],
           onClick: () => connect({ connector })
         })),
       ]

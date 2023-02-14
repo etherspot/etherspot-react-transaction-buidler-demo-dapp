@@ -15,7 +15,7 @@ import SignIn from './components/SignIn';
 const { chains, provider, webSocketProvider } = configureChains(
   [mainnet],
   [infuraProvider({ apiKey: process.env.REACT_APP_INFURA_ID ?? '' }), publicProvider()],
-)
+);
 
 const client = createClient({
   autoConnect: true,
@@ -36,7 +36,7 @@ const client = createClient({
   ],
   provider,
   webSocketProvider,
-})
+});
 
 
 const chainId = 1;
@@ -79,7 +79,7 @@ const App = () => {
   const [connectedProvider, setConnectedProvider] = useState(null);
   const [useDashboardTheme, setUseDashboardTheme] = useState(false);
   const [web3AuthInstance, setWeb3AuthInstance] = useState<Web3AuthCore | null>(null);
-  const [wagmiLogout, setWagmiLogout] = useState<Function | null>();
+  const [wagmiLogout, setWagmiLogout] = useState<Function | null>(null);
 
   const themeOverride = useMemo(() => {
     if (!useDashboardTheme) return undefined;
@@ -173,9 +173,7 @@ const App = () => {
               setConnectedProvider(isWagmi ? web3.currentProvider.provider : web3.currentProvider)
             }}
             onWeb3AuthInstanceSet={setWeb3AuthInstance}
-            setWagmiLogout={(func) => {
-              setWagmiLogout(() => func)
-            }}
+            setWagmiLogout={setWagmiLogout}
           />
         )}
         {connectedProvider && (
