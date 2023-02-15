@@ -291,9 +291,9 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet, setWagmiLogout }: Si
   useEffect(() => {
     if (isConnected) {
       onWeb3ProviderSet(signer?.provider, true);
-      setWagmiLogout(() => disconnect)
+      setWagmiLogout(() => disconnect);
     }
-  }, [isConnected, signer, onWeb3ProviderSet])
+  }, [isConnected, signer, onWeb3ProviderSet]);
 
   const { connect, connectors } = useConnect();
 
