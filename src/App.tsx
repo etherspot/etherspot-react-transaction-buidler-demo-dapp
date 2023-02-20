@@ -1,8 +1,6 @@
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Etherspot, TRANSACTION_BLOCK_TYPE } from '@etherspot/react-transaction-buidler';
 import styled, { createGlobalStyle } from 'styled-components';
-import Web3 from 'web3';
-import { Web3AuthCore } from '@web3auth/core';
 import { WagmiConfig, createClient, configureChains, mainnet } from 'wagmi';
 import { infuraProvider } from 'wagmi/providers/infura';
 import { publicProvider } from 'wagmi/providers/public';
@@ -10,7 +8,6 @@ import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet';
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 
-import SignIn from './components/SignIn';
 
 const { chains, provider, webSocketProvider } = configureChains(
   [mainnet],
@@ -76,10 +73,7 @@ const ToggleThemeButton = styled.span`
 `;
 
 const App = () => {
-  const [connectedProvider, setConnectedProvider] = useState(null);
   const [useDashboardTheme, setUseDashboardTheme] = useState(false);
-  const [web3AuthInstance, setWeb3AuthInstance] = useState<Web3AuthCore | null>(null);
-  const [wagmiLogout, setWagmiLogout] = useState<Function | null>(null);
 
   const themeOverride = useMemo(() => {
     if (!useDashboardTheme) return undefined;
@@ -88,6 +82,8 @@ const App = () => {
         background: {
           main: 'linear-gradient(to right, #f43b40, #f8793f)',
           card: '#fff7f2',
+          tokenBalanceContainer: '#21002e',
+          horizontalLine: 'linear-gradient(90deg, #23a9c9, #cd34a2)',
           topMenu: '#fff',
           topMenuButton: '#fff',
           selectInput: '#fff',
@@ -121,6 +117,14 @@ const App = () => {
           walletButton: 'linear-gradient(to bottom, #fd9250, #ff5548)',
           walletChainDropdown: '#fff',
           walletChainButtonActive: '#ffeee6',
+          signInBackground: 'linear-gradient(166deg, #ff8932 9%, #f44c3c 97%)',
+          signInBackgroundBorder: '#f53f40',
+          signInOption: 'rgba(255, 255, 255, 0.25)',
+          signInOptionBorder: '#ff966b',
+          signInSocialLoginBorder: '#ff966b',
+          signInOptionTabActive: 'linear-gradient(to bottom, #f76b3f, #f43f40)',
+          signInOptionTabActiveBorder: '#f43f40',
+          signInOptionWrapper: '#fb9267',
         },
         text: {
           main: '#fff',
@@ -129,8 +133,12 @@ const App = () => {
           cardTitle: '#191726',
           card: '#000',
           cardDisabled: '#ddd',
+          tokenBalance: '#fefefe',
+          tokenValue: '#57c2d6',
+          tokenTotal: '#ff0065',
           innerLabel: '#6e6b6a',
           outerLabel: '#6e6b6a',
+          reviewLabel: '#5fc9e0',
           selectInput: '#000',
           selectInputOption: '#191726',
           selectInputOptionSecondary: '#191726',
@@ -151,7 +159,12 @@ const App = () => {
           listItemQuickButtonPrimary: '#fff',
           transactionStatusLink: '#ff7733',
           pasteIcon: '#ff884d',
+          settingsIcon: '#ee6723',
           walletDropdownIcon: '#221f33',
+          showMoreOrLessOption: '#fff',
+          signInTitle: '#fff',
+          signInOptionTabInactive: '#fff',
+          signInOptionTabActive: '#fff',
         },
       },
     };
@@ -160,47 +173,15 @@ const App = () => {
     <WagmiConfig client={client}>
       <GlobalStyle />
       <Wrapper>
-        {!connectedProvider && (
-          <SignIn
-            onWeb3ProviderSet={async (web3Provider, isWagmi) => {
-              if (!web3Provider) {
-                setConnectedProvider(null);
-                return;
-              }
-
-              const web3 = new Web3(web3Provider as any);
-              // @ts-ignore
-              setConnectedProvider(isWagmi ? web3.currentProvider.provider : web3.currentProvider)
-            }}
-            onWeb3AuthInstanceSet={setWeb3AuthInstance}
-            setWagmiLogout={setWagmiLogout}
-          />
-        )}
-        {connectedProvider && (
           <div>
-            <ToggleThemeButton onClick={() => setUseDashboardTheme(!useDashboardTheme)}>Toggle theme</ToggleThemeButton>
+          <ToggleThemeButton onClick={() => setUseDashboardTheme(!useDashboardTheme)}>Toggle theme</ToggleThemeButton>
             <Etherspot
               defaultTransactionBlocks={[{ type: TRANSACTION_BLOCK_TYPE.ASSET_BRIDGE }]}
-              provider={connectedProvider}
               chainId={chainId}
               themeOverride={themeOverride}
-              onLogout={async () => {
-                if (wagmiLogout) wagmiLogout();
-                if (!web3AuthInstance) return;
-
-                try {
-                  await web3AuthInstance.logout({ cleanup: true });
-                  web3AuthInstance.clearCache();
-                } catch (e) {
-                  //
-                }
-
-                setConnectedProvider(null);
-              }}
               showMenuLogout
             />
           </div>
-        )}
       </Wrapper>
     </WagmiConfig>
   );
