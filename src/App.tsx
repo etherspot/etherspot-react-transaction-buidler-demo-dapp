@@ -88,6 +88,8 @@ const App = () => {
         background: {
           main: 'linear-gradient(to right, #f43b40, #f8793f)',
           card: '#fff7f2',
+          tokenBalanceContainer: '#21002e',
+          horizontalLine: 'linear-gradient(90deg, #23a9c9, #cd34a2)',
           topMenu: '#fff',
           topMenuButton: '#fff',
           selectInput: '#fff',
@@ -129,8 +131,12 @@ const App = () => {
           cardTitle: '#191726',
           card: '#000',
           cardDisabled: '#ddd',
+          tokenBalance: '#fefefe',
+          tokenValue: '#57c2d6',
+          tokenTotal: '#ff0065',
           innerLabel: '#6e6b6a',
           outerLabel: '#6e6b6a',
+          reviewLabel: '#5fc9e0',
           selectInput: '#000',
           selectInputOption: '#191726',
           selectInputOptionSecondary: '#191726',
@@ -151,6 +157,7 @@ const App = () => {
           listItemQuickButtonPrimary: '#fff',
           transactionStatusLink: '#ff7733',
           pasteIcon: '#ff884d',
+          settingsIcon: '#ee6723',
           walletDropdownIcon: '#221f33',
         },
       },
@@ -169,6 +176,7 @@ const App = () => {
               }
 
               const web3 = new Web3(web3Provider as any);
+
               // @ts-ignore
               setConnectedProvider(isWagmi ? web3.currentProvider.provider : web3.currentProvider)
             }}
