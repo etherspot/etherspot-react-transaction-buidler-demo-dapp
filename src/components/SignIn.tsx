@@ -12,16 +12,11 @@ import {
   WALLET_ADAPTERS,
 } from '@web3auth/base';
 import { Web3AuthCore } from '@web3auth/core';
-import { NetworkSwitch } from '@web3auth/ui';
 import { OpenloginAdapter } from '@web3auth/openlogin-adapter';
 import { BsGithub, BsTwitter } from 'react-icons/bs';
 import { AiOutlineMail } from 'react-icons/ai';
-import { MetamaskAdapter } from '@web3auth/metamask-adapter';
 import { TorusWalletAdapter } from '@web3auth/torus-evm-adapter';
-import { WalletConnectV1Adapter } from '@web3auth/wallet-connect-v1-adapter';
-import QRCodeModal from '@walletconnect/qrcode-modal';
-import { CoinbaseAdapter } from '@web3auth/coinbase-adapter';
-import { useConnect, useAccount, useSigner, useDisconnect } from 'wagmi';
+import { useConnect, useAccount } from 'wagmi';
 
 import iconMetamask from '../assets/images/icon-metamask.png';
 import iconWalletConnect from '../assets/images/icon-walletconnect.png';
@@ -66,7 +61,6 @@ const LoadingBarWrapper = styled.div`
 
 const LoadingBar = styled.div`
   height: 6px;
-  border-radius: 3px;
   border-radius: 3px;
   width: 214px;
   background:
@@ -162,7 +156,6 @@ const EmailInput = styled.input`
   padding: 13px;
   border-radius: 12px;
   border: solid 1.5px #ffa682;
-  margin-bottom: 14px;
   font-family: "PTRootUIWebMedium", sans-serif;
   font-size: 16px;
   color: #fff;
@@ -202,12 +195,17 @@ const web3AuthClientId = process.env.REACT_APP_WEB3AUTH_CLIENT_ID as string;
 type LOGIN_PROVIDER_TYPE = 'google' | 'facebook' | 'apple' | 'discord' | 'twitch' | 'github' | 'twitter' | 'email_passwordless'
 
 interface SignInProps {
-  onWeb3ProviderSet: (web3Provider: any, isWagmi?: boolean) => void;
+  onWeb3ProviderSet: (web3Provider: any) => void;
   onWeb3AuthInstanceSet: (instance: Web3AuthCore) => void;
-  setWagmiLogout: React.Dispatch<React.SetStateAction<Function | null>>;
 }
 
-const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet, setWagmiLogout }: SignInProps) => {
+const iconById: Record<string, JSX.Element> = {
+  metaMask: <img src={iconMetamask} alt="metamask" />,
+  walletConnect: <img src={iconWalletConnect} alt="walletconnect" />,
+  coinbaseWallet: <img src={iconCoinbase} alt="coinbase" />,
+};
+
+const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet }: SignInProps) => {
   const [showSocialLogins, setShowSocialLogins] = useState(true);
   const [showMoreOptions, setShowMoreOptions] = useState(false);
   const [web3Auth, setWeb3Auth] = useState<Web3AuthCore | null>(null);
@@ -242,25 +240,8 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet, setWagmiLogout }: Si
 
       web3AuthInstance.configureAdapter(openLoginAdapter);
 
-      const metamaskAdapter = new MetamaskAdapter({ clientId: web3AuthClientId });
-      web3AuthInstance.configureAdapter(metamaskAdapter);
-
       const torusWalletAdapter = new TorusWalletAdapter({ clientId: web3AuthClientId });
       web3AuthInstance.configureAdapter(torusWalletAdapter);
-
-      const networkUi = new NetworkSwitch()
-      const walletConnectV1Adapter = new WalletConnectV1Adapter({
-        adapterSettings: {
-          bridge: 'https://bridge.walletconnect.org',
-          qrcodeModal: QRCodeModal,
-          networkSwitchModal: networkUi
-        },
-        clientId: web3AuthClientId
-      })
-      web3AuthInstance.configureAdapter(walletConnectV1Adapter);
-
-      const coinbaseAdapter = new CoinbaseAdapter({ clientId: web3AuthClientId });
-      web3AuthInstance.configureAdapter(coinbaseAdapter);
 
       web3AuthInstance.on(ADAPTER_EVENTS.CONNECTED, () => {
         if (!web3AuthInstance?.provider) return;
@@ -284,16 +265,20 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet, setWagmiLogout }: Si
     /* eslint-disable-next-line */
   }, []);
 
-  const { isConnected } = useAccount();
-  const { disconnect } = useDisconnect();
-  const { data: signer } = useSigner();
+  const { connector, isConnected } = useAccount();
 
   useEffect(() => {
-    if (isConnected) {
-      onWeb3ProviderSet(signer?.provider, true);
-      setWagmiLogout(() => disconnect);
+    const update = async () => {
+      if (!connector?.ready || !isConnected) return;
+      const wagmiWeb3Provider = await connector.getProvider();
+      onWeb3ProviderSet(wagmiWeb3Provider);
     }
-  }, [isConnected, signer, onWeb3ProviderSet]);
+    update();
+  }, [
+    connector,
+    isConnected,
+    onWeb3ProviderSet,
+  ]);
 
   const { connect, connectors } = useConnect();
 
@@ -324,6 +309,7 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet, setWagmiLogout }: Si
       setIsSigningIn(false);
       return;
     }
+
     onWeb3ProviderSet(web3authProvider);
     setEmail('');
     setShowEmailLogin(false);
@@ -340,13 +326,7 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet, setWagmiLogout }: Si
 
   useEffect(() => { setErrorMessage(null); }, [showSocialLogins, showMoreOptions]);
 
-  const iconById: Record<string, JSX.Element> = {
-    metaMask: <img src={iconMetamask} alt="metamask" />,
-    walletConnect: <img src={iconWalletConnect} alt="walletconnect" />,
-    coinbaseWallet: <img src={iconCoinbase} alt="coinbase" />,
-  };
   const visibleSignInOptions = useMemo(() => {
-
     const signInOptions = {
       social: [
         { title: 'Google', icon: <img src={iconGoogle} alt="google" />, onClick: () => loginWithOpenLogin('google') },
