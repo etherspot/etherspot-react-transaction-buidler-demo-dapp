@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Etherspot, TRANSACTION_BLOCK_TYPE } from '@etherspot/react-transaction-buidler';
+import { Etherspot } from '@etherspot/react-transaction-buidler';
 import styled, { createGlobalStyle } from 'styled-components';
 import Web3 from 'web3';
 import { Web3AuthCore } from '@web3auth/core';
@@ -149,7 +149,6 @@ const App = () => {
           <div>
             <ToggleThemeButton onClick={() => setUseDashboardTheme(!useDashboardTheme)}>Toggle theme</ToggleThemeButton>
             <Etherspot
-              defaultTransactionBlocks={[{ type: TRANSACTION_BLOCK_TYPE.ASSET_BRIDGE }]}
               provider={connectedProvider}
               chainId={chainId}
               themeOverride={themeOverride}
