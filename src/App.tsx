@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Etherspot, TRANSACTION_BLOCK_TYPE } from '@etherspot/react-transaction-buidler';
+import { Etherspot } from '@etherspot/react-transaction-buidler';
 import styled, { createGlobalStyle } from 'styled-components';
 import Web3 from 'web3';
 import { Web3AuthCore } from '@web3auth/core';
@@ -14,7 +14,7 @@ import SignIn from './components/SignIn';
 
 const { chains, provider, webSocketProvider } = configureChains(
   [mainnet],
-  [infuraProvider({ apiKey: process.env.REACT_APP_INFURA_ID ?? '' }), publicProvider()],
+  [infuraProvider({ apiKey: process.env.REACT_APP_INFURA_ID ?? '' }), publicProvider()]
 );
 
 const client = createClient({
@@ -37,7 +37,6 @@ const client = createClient({
   provider,
   webSocketProvider,
 });
-
 
 const chainId = 1;
 
@@ -170,7 +169,7 @@ const App = () => {
 
               const web3 = new Web3(web3Provider as any);
               // @ts-ignore
-              setConnectedProvider(isWagmi ? web3.currentProvider.provider : web3.currentProvider)
+              setConnectedProvider(isWagmi ? web3.currentProvider.provider : web3.currentProvider);
             }}
             onWeb3AuthInstanceSet={setWeb3AuthInstance}
             setWagmiLogout={setWagmiLogout}
@@ -180,7 +179,6 @@ const App = () => {
           <div>
             <ToggleThemeButton onClick={() => setUseDashboardTheme(!useDashboardTheme)}>Toggle theme</ToggleThemeButton>
             <Etherspot
-              defaultTransactionBlocks={[{ type: TRANSACTION_BLOCK_TYPE.ASSET_BRIDGE }]}
               provider={connectedProvider}
               chainId={chainId}
               themeOverride={themeOverride}
