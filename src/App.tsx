@@ -138,6 +138,7 @@ const App = () => {
               }
 
               const web3 = new Web3(web3Provider as any);
+
               // @ts-ignore
               setConnectedProvider(web3.currentProvider);
             }}
