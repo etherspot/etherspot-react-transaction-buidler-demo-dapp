@@ -1,43 +1,11 @@
 import React, { useMemo, useState } from 'react';
-import { Etherspot, TRANSACTION_BLOCK_TYPE } from '@etherspot/react-transaction-buidler';
+import { Etherspot } from '@etherspot/react-transaction-buidler';
 import styled, { createGlobalStyle } from 'styled-components';
 import Web3 from 'web3';
 import { Web3AuthCore } from '@web3auth/core';
-import { WagmiConfig, createClient, configureChains, mainnet } from 'wagmi';
-import { infuraProvider } from 'wagmi/providers/infura';
-import { publicProvider } from 'wagmi/providers/public';
-import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet';
-import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
-import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
+import { useAccount, useDisconnect } from 'wagmi';
 
 import SignIn from './components/SignIn';
-
-const { chains, provider, webSocketProvider } = configureChains(
-  [mainnet],
-  [infuraProvider({ apiKey: process.env.REACT_APP_INFURA_ID ?? '' }), publicProvider()],
-);
-
-const client = createClient({
-  autoConnect: true,
-  connectors: [
-    new MetaMaskConnector({ chains }),
-    new CoinbaseWalletConnector({
-      chains,
-      options: {
-        appName: 'Etherspot Buidler',
-      },
-    }),
-    new WalletConnectConnector({
-      chains,
-      options: {
-        qrcode: true,
-      },
-    }),
-  ],
-  provider,
-  webSocketProvider,
-});
-
 
 const chainId = 1;
 
@@ -79,7 +47,8 @@ const App = () => {
   const [connectedProvider, setConnectedProvider] = useState(null);
   const [useDashboardTheme, setUseDashboardTheme] = useState(false);
   const [web3AuthInstance, setWeb3AuthInstance] = useState<Web3AuthCore | null>(null);
-  const [wagmiLogout, setWagmiLogout] = useState<Function | null>(null);
+  const { disconnect: wagmiDisconnect } = useDisconnect();
+  const { connector, isConnected } = useAccount();
 
   const themeOverride = useMemo(() => {
     if (!useDashboardTheme) return undefined;
@@ -157,12 +126,12 @@ const App = () => {
     };
   }, [useDashboardTheme]);
   return (
-    <WagmiConfig client={client}>
+    <>
       <GlobalStyle />
       <Wrapper>
         {!connectedProvider && (
           <SignIn
-            onWeb3ProviderSet={async (web3Provider, isWagmi) => {
+            onWeb3ProviderSet={async (web3Provider) => {
               if (!web3Provider) {
                 setConnectedProvider(null);
                 return;
@@ -171,27 +140,31 @@ const App = () => {
               const web3 = new Web3(web3Provider as any);
 
               // @ts-ignore
-              setConnectedProvider(isWagmi ? web3.currentProvider.provider : web3.currentProvider)
+              setConnectedProvider(web3.currentProvider);
             }}
             onWeb3AuthInstanceSet={setWeb3AuthInstance}
-            setWagmiLogout={setWagmiLogout}
           />
         )}
         {connectedProvider && (
           <div>
             <ToggleThemeButton onClick={() => setUseDashboardTheme(!useDashboardTheme)}>Toggle theme</ToggleThemeButton>
             <Etherspot
-              defaultTransactionBlocks={[{ type: TRANSACTION_BLOCK_TYPE.ASSET_BRIDGE }]}
               provider={connectedProvider}
               chainId={chainId}
               themeOverride={themeOverride}
               onLogout={async () => {
-                if (wagmiLogout) wagmiLogout();
-                if (!web3AuthInstance) return;
+                try {
+                  if (isConnected) wagmiDisconnect();
+                  if (connector) await connector.disconnect();
+                } catch (e) {
+                  //
+                }
 
                 try {
-                  await web3AuthInstance.logout({ cleanup: true });
-                  web3AuthInstance.clearCache();
+                  if (web3AuthInstance) {
+                    await web3AuthInstance.logout({ cleanup: true });
+                    web3AuthInstance.clearCache();
+                  }
                 } catch (e) {
                   //
                 }
@@ -203,7 +176,7 @@ const App = () => {
           </div>
         )}
       </Wrapper>
-    </WagmiConfig>
+    </>
   );
 };
 
