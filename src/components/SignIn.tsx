@@ -148,18 +148,18 @@ const SignInOption = styled.div<{ disabled?: boolean }>`
 `;
 
 const EmailInput = styled.input`
-  margin-bottom: 14px;
-  padding: 13px;
+  margin-bottom: 30px;
+  padding: 16px 13px;
   border-radius: 12px;
-  border: solid 1.5px #ffa682;
+  border: solid 1.5px #49437d;
   font-family: 'PTRootUIWebMedium', sans-serif;
   font-size: 16px;
   color: #fff;
-  background: transparent;
+  background-color: #241938;
   width: calc(100% - 34px);
 
   &::placeholder {
-    color: #ffac82;
+    color: #8a5fd7;
   }
 
   &:focus {
@@ -167,18 +167,22 @@ const EmailInput = styled.input`
   }
 `;
 
-const EmailSubmitButton = styled.div`
+const EmailSubmitButton = styled.button`
   cursor: pointer;
   margin-bottom: 14px;
   padding: 17px;
   border-radius: 16px;
   box-shadow: 0 2px 4px 0 rgba(95, 0, 1, 0.13);
-  border: solid 1px #f43f40;
-  background-image: linear-gradient(to bottom, #fffbf5, rgba(255, 205, 197, 0.5));
+  border: none;
+  background-image: linear-gradient(to bottom, #fdb754, #f18214);
   font-family: 'PTRootUIWebRegular', sans-serif;
   text-align: center;
-  color: #ff4900;
-  font-size: 16px;
+  color: #fff;
+  font-size: 20px;
+  width: 100%;
+  &:disabled {
+    opacity: 0.2;
+  }
 
   &:hover {
     opacity: 0.7;
@@ -396,7 +400,10 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet }: SignInProps) => {
         <WrapperTitle>Sign in with Email</WrapperTitle>
         <EmailInput placeholder="Enter you email" onChange={(e) => setEmail(e?.target?.value ?? '')} />
         {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-        <EmailSubmitButton onClick={() => loginWithOpenLogin('email_passwordless', email ?? undefined)}>
+        <EmailSubmitButton
+          onClick={() => loginWithOpenLogin('email_passwordless', email ?? undefined)}
+          disabled={!email}
+        >
           Sign in
         </EmailSubmitButton>
         <WrapperTextClickable
