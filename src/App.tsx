@@ -172,7 +172,7 @@ const App = () => {
 
                 setConnectedProvider(null);
               }}
-              defaultTransactionBlocks={[TRANSACTION_BLOCK_TYPE.PLR_STAKING_V2]}
+              defaultTransactionBlocks={[{ type: TRANSACTION_BLOCK_TYPE.PLR_STAKING_V2 }]}
               hideWalletBlock
               showMenuLogout
             />
