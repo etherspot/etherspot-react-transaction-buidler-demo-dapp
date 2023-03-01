@@ -1,6 +1,6 @@
 # !/bin/bash
 
-if [ "$CF_PAGES_BRANCH" == "develop" ]; then
+if [ "$CF_PAGES_BRANCH" == "v2-staking-demo" ]; then
   echo "Branch is:" $CF_PAGES_BRANCH
   mkdir .ssh && touch id_ed2551
   echo $ETHERSPOT_BUIDLER_PRIVATE_KEY | base64 --decode  >> .ssh/id_ed2551
