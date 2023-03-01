@@ -4,6 +4,7 @@ import styled, { createGlobalStyle } from 'styled-components';
 import Web3 from 'web3';
 import { Web3AuthCore } from '@web3auth/core';
 import { useAccount, useDisconnect } from 'wagmi';
+import { TRANSACTION_BLOCK_TYPE } from '../../etherspot-react-transaction-buidler';
 
 import SignIn from './components/SignIn';
 
@@ -171,6 +172,8 @@ const App = () => {
 
                 setConnectedProvider(null);
               }}
+              defaultTransactionBlocks={[TRANSACTION_BLOCK_TYPE.PLR_STAKING_V2]}
+              hideWalletBlock
               showMenuLogout
             />
           </div>
