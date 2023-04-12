@@ -95,6 +95,10 @@ const App = () => {
           walletChainButtonActive: '#ffeee6',
           deployButton: '#ff884d',
           blockParagraphBorder: 'linear-gradient(#346ecd, #cd34a2)',
+          settingMenuMain: 'linear-gradient(rgb(253, 146, 80), rgb(255, 85, 72))',
+          settingsModalBorder: '#d9d9d940',
+          settingsModal: '#fff',
+          settingsIcon: '#fd9250',
         },
         text: {
           main: '#fff',
@@ -127,6 +131,9 @@ const App = () => {
           transactionStatusLink: '#ff7733',
           pasteIcon: '#ff884d',
           walletDropdownIcon: '#221f33',
+          settingsModalSubHeader: '#6e6b6a',
+          settingsMenuItem: '#191726',
+          settingsMenuItemHover: '#ee6723',
         },
       },
     };
