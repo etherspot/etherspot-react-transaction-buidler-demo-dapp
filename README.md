@@ -82,7 +82,11 @@ An implementation of the same can be found in the [ThemeOverride](https://github
 
 ## Available Scripts
 
-In the project directory, you can run:
+In the project directory, add a file called ".env"
+To this file add this line: REACT_APP_WEB3AUTH_CLIENT_ID = "fake_id"
+Replace fake_id with a real client ID from https://dashboard.web3auth.io/home/web3auth if you want social logins to work. Otherwise continue without it and login with a keybased wallet.
+
+Then start your dapp using this:
 
 ### `npm start`
 
