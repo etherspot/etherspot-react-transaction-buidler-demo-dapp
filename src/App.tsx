@@ -99,6 +99,8 @@ const App = () => {
           settingsModalBorder: '#d9d9d940',
           settingsModal: '#fff',
           settingsIcon: '#fd9250',
+          loadingAnimationBackground: '#FCEADF',
+          loadingAnimationForeground: '#FBF7F5',
         },
         text: {
           main: '#fff',
