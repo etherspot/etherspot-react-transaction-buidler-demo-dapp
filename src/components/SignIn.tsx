@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ADAPTER_EVENTS, CHAIN_NAMESPACES, WALLET_ADAPTER_TYPE, WALLET_ADAPTERS } from '@web3auth/base';
-import { Web3AuthCore } from '@web3auth/core';
+import { Web3AuthNoModal } from "@web3auth/no-modal";
 import { OpenloginAdapter } from '@web3auth/openlogin-adapter';
 import { BsGithub, BsTwitter } from 'react-icons/bs';
 import { AiOutlineMail } from 'react-icons/ai';
@@ -203,7 +203,7 @@ type LOGIN_PROVIDER_TYPE =
 
 interface SignInProps {
   onWeb3ProviderSet: (web3Provider: any) => void;
-  onWeb3AuthInstanceSet: (instance: Web3AuthCore) => void;
+  onWeb3AuthInstanceSet: (instance: Web3AuthNoModal) => void;
 }
 
 const iconById: Record<string, JSX.Element> = {
@@ -215,7 +215,7 @@ const iconById: Record<string, JSX.Element> = {
 const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet }: SignInProps) => {
   const [showSocialLogins, setShowSocialLogins] = useState(true);
   const [showMoreOptions, setShowMoreOptions] = useState(false);
-  const [web3Auth, setWeb3Auth] = useState<Web3AuthCore | null>(null);
+  const [web3Auth, setWeb3Auth] = useState<Web3AuthNoModal | null>(null);
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showEmailLogin, setShowEmailLogin] = useState<boolean>(false);
@@ -225,7 +225,7 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet }: SignInProps) => {
     const initWeb3AuthCore = async () => {
       if (!!localStorage.getItem('Web3Auth-cachedAdapter')) setIsSigningIn(true);
 
-      const web3AuthInstance = new Web3AuthCore({
+      const web3AuthInstance = new Web3AuthNoModal({
         clientId: web3AuthClientId,
         chainConfig: {
           chainNamespace: CHAIN_NAMESPACES.EIP155,
