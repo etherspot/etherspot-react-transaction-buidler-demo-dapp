@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Etherspot } from '@etherspot/react-transaction-buidler';
 import styled, { createGlobalStyle } from 'styled-components';
 import Web3 from 'web3';
-import { Web3AuthCore } from '@web3auth/core';
+import { Web3AuthNoModal } from "@web3auth/no-modal";
 import { useAccount, useDisconnect } from 'wagmi';
 
 import SignIn from './components/SignIn';
@@ -46,7 +46,7 @@ const ToggleThemeButton = styled.span`
 const App = () => {
   const [connectedProvider, setConnectedProvider] = useState(null);
   const [useDashboardTheme, setUseDashboardTheme] = useState(false);
-  const [web3AuthInstance, setWeb3AuthInstance] = useState<Web3AuthCore | null>(null);
+  const [web3AuthInstance, setWeb3AuthInstance] = useState<Web3AuthNoModal | null>(null);
   const { disconnect: wagmiDisconnect } = useDisconnect();
   const { connector, isConnected } = useAccount();
 
@@ -99,6 +99,8 @@ const App = () => {
           settingsModalBorder: '#d9d9d940',
           settingsModal: '#fff',
           settingsIcon: '#fd9250',
+          loadingAnimationBackground: '#FCEADF',
+          loadingAnimationForeground: '#FBF7F5',
         },
         text: {
           main: '#fff',
