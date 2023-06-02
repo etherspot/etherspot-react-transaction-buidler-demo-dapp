@@ -189,7 +189,7 @@ const EmailSubmitButton = styled.button`
   }
 `;
 
-const web3AuthClientId = process.env.REACT_APP_WEB3AUTH_CLIENT_ID as string;
+const web3AuthClientId = process.env.REACT_APP_TEST_BOOKMAKER_WEB3AUTH_CLIENT_ID as string;
 
 type LOGIN_PROVIDER_TYPE =
   | 'google'
