@@ -11,8 +11,6 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
   [infuraProvider({ apiKey: process.env.REACT_APP_INFURA_ID ?? '' }), publicProvider()]
 );
 
-console.log("shsgshshhs", process.env.REACT_APP_WALLET_CONNECT_PROJECT_ID)
-
 const client = createConfig({
   autoConnect: true,
   connectors: [
