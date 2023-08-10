@@ -8,7 +8,7 @@ if [ "$CF_PAGES_BRANCH" == "develop" ]; then
   BUILD_TIMESTAMP=$(date +%s)
   echo "REACT_APP_BUILD_TIMESTAMP=$BUILD_TIMESTAMP" >> .env
   npm cache clean --force
-  npm install
+  rm -rf node_modules && npm install --force
   NODE_ENV=production npm run build
 else
   NODE_ENV=production npm run build
