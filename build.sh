@@ -7,6 +7,7 @@ if [ "$CF_PAGES_BRANCH" == "develop" ]; then
   jq '.dependencies."@etherspot/react-transaction-buidler" =  "git+https://github.com/etherspot/etherspot-react-transaction-buidler.git#develop"' package.json > temp-package.json && mv temp-package.json package.json
   BUILD_TIMESTAMP=$(date +%s)
   echo "REACT_APP_BUILD_TIMESTAMP=$BUILD_TIMESTAMP" >> .env
+  npm cache clean --force
   npm install
   NODE_ENV=production npm run build
 else
