@@ -171,6 +171,9 @@ const App = () => {
                 try {
                   if (isConnected) wagmiDisconnect();
                   if (connector) await connector.disconnect();
+
+                  // fix until WC2 is fixed in wagmi https://github.com/orgs/WalletConnect/discussions/3291
+                  localStorage.removeItem('wc@2:client:0.3//session');
                 } catch (e) {
                   //
                 }
