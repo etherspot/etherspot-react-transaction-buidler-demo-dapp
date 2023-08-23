@@ -7,7 +7,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Send Slack deployment notifications
-      uses: arddluma/cloudflare-pages-slack-notification@v3
+      uses: arddluma/cloudflare-pages-slack-notification@v4
       with:
         apiToken: ${{ secrets.CF_API_TOKEN }}
         accountId: ${{ secrets.CF_ACC_ID  }}

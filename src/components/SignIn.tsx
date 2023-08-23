@@ -17,6 +17,19 @@ import iconDiscord from '../assets/images/icon-discord.png';
 import iconTwitch from '../assets/images/icon-twitch.png';
 import iconCoinbase from '../assets/images/icon-coinbase.png';
 
+import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
+
+const chainConfig = {
+  chainNamespace: CHAIN_NAMESPACES.EIP155,
+  chainId: "0x1",
+  rpcTarget: "https://rpc.ankr.com/eth",
+  displayName: "Ethereum Mainnet",
+  blockExplorer: "https://goerli.etherscan.io",
+  ticker: "ETH",
+  tickerName: "Ethereum",
+};
+const privateKeyProvider = new EthereumPrivateKeyProvider({ config: { chainConfig } });
+
 const Wrapper = styled.div`
   width: 374px;
   max-width: 100%;
@@ -243,6 +256,7 @@ const SignIn = ({ onWeb3ProviderSet, onWeb3AuthInstanceSet }: SignInProps) => {
         loginSettings: {
           mfaLevel: 'none',
         },
+        privateKeyProvider
       });
 
       web3AuthInstance.configureAdapter(openLoginAdapter);

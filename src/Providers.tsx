@@ -1,17 +1,31 @@
-import React from 'react';
-import { configureChains, createClient, mainnet, WagmiConfig } from 'wagmi';
+import { configureChains, createConfig, WagmiConfig } from 'wagmi';
+import {
+  gnosis,
+  mainnet,
+  polygon,
+  arbitrum,
+  bsc,
+  optimism,
+  avalanche,
+  celo,
+  okc,
+  moonbeam,
+  fantom,
+  aurora
+} from 'wagmi/chains';
 import { infuraProvider } from 'wagmi/providers/infura';
 import { publicProvider } from 'wagmi/providers/public';
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
+import type { ReactNode } from "react";
 
-const { chains, provider, webSocketProvider } = configureChains(
-  [mainnet],
-  [infuraProvider({ apiKey: process.env.REACT_APP_INFURA_ID ?? '' }), publicProvider()],
+const { chains, publicClient, webSocketPublicClient } = configureChains(
+  [mainnet, polygon, gnosis, arbitrum, bsc, optimism, avalanche, celo, okc, moonbeam, fantom, aurora],
+  [infuraProvider({ apiKey: process.env.REACT_APP_INFURA_ID ?? '' }), publicProvider()]
 );
 
-const client = createClient({
+const client = createConfig({
   autoConnect: true,
   connectors: [
     new MetaMaskConnector({ chains }),
@@ -24,19 +38,18 @@ const client = createClient({
     new WalletConnectConnector({
       chains,
       options: {
-        version: '1',
-        qrcode: true,
+        isNewChainsStale: false,
+        projectId: process.env.REACT_APP_WALLET_CONNECT_PROJECT_ID ?? '',
+        showQrModal: true,
       },
     }),
   ],
-  provider,
-  webSocketProvider,
+  publicClient,
+  webSocketPublicClient,
 });
 
-const Providers = ({ children }: { children: React.ReactNode}) => (
-  <WagmiConfig client={client}>
-    {children}
-  </WagmiConfig>
+const Providers = ({ children }: { children: ReactNode }) => (
+  <WagmiConfig config={client}>{children}</WagmiConfig>
 );
 
 export default Providers;
