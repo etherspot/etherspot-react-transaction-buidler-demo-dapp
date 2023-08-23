@@ -21,7 +21,7 @@ import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 import type { ReactNode } from "react";
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [polygon, gnosis, mainnet, arbitrum, bsc, optimism, avalanche, celo, okc, moonbeam, fantom, aurora],
+  [mainnet, polygon, gnosis, arbitrum, bsc, optimism, avalanche, celo, okc, moonbeam, fantom, aurora],
   [infuraProvider({ apiKey: process.env.REACT_APP_INFURA_ID ?? '' }), publicProvider()]
 );
 
